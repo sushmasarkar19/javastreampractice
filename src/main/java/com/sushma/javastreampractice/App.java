@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -45,10 +46,18 @@ public class App {
 		Integer totalSalary = employeeList.stream().map(n -> n.getSalary()).reduce(0, Integer::sum);
 
 		System.out.println("total salary: " + totalSalary);
+		
+		Integer totalsalary1 = employeeList.stream().collect(Collectors.reducing(0,Employee::getSalary,Integer::sum));
+		
+		System.out.println("total salary: " + totalsalary1);
 
 		Double average = employeeList.stream().mapToDouble(n -> n.getSalary()).average().orElse(0.0);
+		
+		Double average1= employeeList.stream().collect(Collectors.averagingInt(Employee::getSalary));
 
 		System.out.println("average: " + average);
+		
+		System.out.println("average1: " + average1);
 
 		Double averageDouble = employeeList.stream().collect(Collectors.averagingInt(n -> n.getSalary()));
 
@@ -57,6 +66,11 @@ public class App {
 		Integer highestSalary = employeeList.stream().map(Employee::getSalary).max(Integer::compareTo).orElse(0);
 
 		System.out.println("highestSalary: " + highestSalary);
+		
+		Employee highestsalaryEmp = employeeList.stream()
+				.collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary))).orElse(null);
+		
+		System.out.println("highestsalaryEmp: " + highestsalaryEmp);
 
 		List<Employee> highestSalaryEmployee = employeeList.stream().filter(n -> n.getSalary().equals(highestSalary))
 				.toList();
@@ -82,6 +96,9 @@ public class App {
 		System.out.println("descSorting: " + descSorting);
 
 		List<Employee> namesorting = employeeList.stream().sorted(Comparator.comparing(Employee::getName)).toList();
+		
+		Integer secondHighestSalary = employeeList.stream().map(Employee::getSalary)
+				.sorted(Comparator.reverseOrder()).skip(1).findFirst().orElse(0);
 
 		System.out.println("namesorting: " + namesorting);
 
@@ -112,7 +129,34 @@ public class App {
 		
 		System.out.println("true  -> High salary employees: " + partionEx.get(true));
 		System.out.println("false -> Others: " + partionEx.get(false));
+		
+		Employee secondHighestSalaryEmp= employeeList.stream()
+				.sorted(Comparator.comparing(Employee::getSalary).reversed()).skip(2).findFirst().orElse(null);
+		System.out.println("secondHighestSalaryEmp: " + secondHighestSalaryEmp);
+		
+		Integer secondHighestSalary1= employeeList.stream().map(Employee::getSalary)
+				.distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst().orElse(0);
+		
+		System.out.println("secondHighestSalary1: " + secondHighestSalary1);
+		
+		List<Integer> distinctSalary=employeeList.stream().map(Employee::getSalary).distinct().toList();
+		
+		System.out.println("distinctSalary: " + distinctSalary);
+		
+		List<Employee> salaryGreaterthan = employeeList.stream().filter(n->n.getSalary()>24000).toList();
+		
+		System.out.println("salaryGreaterthan: " + salaryGreaterthan);
+		
+		String joiningOnName=employeeList.stream().map(Employee::getName).collect(Collectors.joining(","));
+		
+		System.out.println("joiningOnName: " + joiningOnName);		
+		
+		Map<String,Integer> convertedToMap = employeeList.stream()
+				.collect(Collectors.toMap(Employee::getName,Employee::getSalary));
+		
+		System.out.println("convertedToMap: " + convertedToMap);
 	}
+	
 }
 
 class Employee {
